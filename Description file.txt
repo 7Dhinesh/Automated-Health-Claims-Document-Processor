@@ -1,0 +1,16 @@
+1. Automated Health-Claims Document Processor
+This project simulates an automated workflow for handling medical documents or claims, which directly relates to your experience with HIPAA and claims adjudication.
+
+The Concept: When a user (or a healthcare provider) uploads a document (CSV or Image) to an Amazon S3 bucket, it automatically triggers a Python-based AWS Lambda function.
+
+What it does:
+
+Trigger: Upload a "claim" (CSV file) to S3.
+
+Process: The Lambda function reads the file using Boto3 (AWS SDK for Python).
+
+Store: It extracts key data points (like CPT/ICD-10 codes) and saves them into Amazon DynamoDB.
+
+Notify: It sends an email alert via Amazon SNS to confirm the claim was received.
+
+Why it's great for you: It showcases your ability to move from manual adjudication to automated cloud workflows while using your Python skills.
