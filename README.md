@@ -1,2 +1,35 @@
-# Automated-Health-Claims-Document-Processor
-When a user (or a healthcare provider) uploads a document (CSV or Image) to an Amazon S3 bucket, it automatically triggers a Python-based AWS Lambda function. 
+import boto3
+import csv
+import json
+
+# Initialize AWS clients
+s3_client = boto3.client('s3')
+dynamodb = boto3.resource('dynamodb')
+
+def lambda_handler(event, context):
+    # 1. Get the bucket name and file name from the S3 event
+    bucket_name = event['Records'][0]['s3']['bucket']['name']
+    file_key = event['Records'][0]['s3']['object']['key']
+    
+    try:
+        # 2. Fetch the file from S3
+        response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+        content = response['Body'].read().decode('utf-8').splitlines()
+        
+        # 3. Parse CSV content (assuming columns: ClaimID, PatientName, ICDCode)
+        reader = csv.DictReader(content)
+        table = dynamodb.Table('HealthcareClaims') # Make sure this table exists!
+        
+        for row in reader:
+            # 4. Write data to DynamoDB
+            table.put_item(Item=row)
+            print(f"Successfully processed Claim ID: {row['ClaimID']}")
+            
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Claim processing complete!')
+        }
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise e
