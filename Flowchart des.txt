@@ -1,0 +1,5 @@
+Here's how the three services connect in a classic serverless pipeline:
+
+S3 stores a file (e.g. a CSV upload or an image)
+Lambda is automatically triggered by the S3 PutObject event — your code runs without any server
+DynamoDB receives the processed/parsed data that Lambda writes
